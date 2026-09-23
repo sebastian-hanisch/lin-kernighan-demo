@@ -1,6 +1,6 @@
 # Lin-Kernighan – eine Suche, die probeweise mehrere Kanten weit vorausschaut – Streamlit-Demo
 
-**[→ Demo live ausprobieren](#)** (Deploy offen)
+**[→ Demo live ausprobieren](https://sebastianhanisch-lin-kernighan-demo.streamlit.app/)**
 
 Siebtes Stück der **Trajektorien-Metaheuristiken-Linie** der "Konzepte"-Reihe für die Website "Sebastian Hanisch – Operations Research und Machine Learning", erstes Stück des **Nachbarschafts-Zweigs**:
 dieselbe Rundtour wie in der [hill-climbing-demo](../hill-climbing-demo), der [simulated-annealing-demo](../simulated-annealing-demo), der [iterated-local-search-demo](../iterated-local-search-demo), der [variable-neighborhood-search-demo](../variable-neighborhood-search-demo), der [tabu-search-demo](../tabu-search-demo) und der [grasp-demo](../grasp-demo) (ein Depot, n Kundenstopps in einem 100 × 100-km-Gebiet), dieselbe untere Schranke.
