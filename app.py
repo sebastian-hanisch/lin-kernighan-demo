@@ -84,7 +84,7 @@ st.caption(
     "[variable-neighborhood-search-demo](https://github.com/sebastian-hanisch/variable-neighborhood-search-demo), der "
     "[tabu-search-demo](https://github.com/sebastian-hanisch/tabu-search-demo) und der "
     "[grasp-demo](https://github.com/sebastian-hanisch/grasp-demo) - ein Depot in der Mitte, n Kundenstopps in einem "
-    "100 × 100-km-Gebiet, euklidische Entfernungen. VLSN und VRP-Nachbarschaften setzen später auf diesem Zweig auf."
+    "100 × 100-km-Gebiet, euklidische Entfernungen. Dynasearch ([dynasearch-demo](https://github.com/sebastian-hanisch/dynasearch-demo)) und die VRP-Nachbarschaften ([vrp-nachbarschaften-demo](https://github.com/sebastian-hanisch/vrp-nachbarschaften-demo)) setzen auf diesem Zweig auf."
 )
 
 with st.expander("So funktioniert Lin-Kernighan", expanded=True):
@@ -94,7 +94,7 @@ with st.expander("So funktioniert Lin-Kernighan", expanded=True):
    Kante zu einem Kandidaten (den nächsten Nachbarn) wird hinzugefügt - wie bei 2-opt mit Kandidatenliste.
 2. **Zweite Kante entfernen.** Das legt einen neuen freien Endpunkt frei; die dazu passende zweite Kante wird entfernt.
 3. **Schließen oder weitermachen.** Verbessert das Schließen (die Tour jetzt wieder zu einem Kreis machen) die
-   Gesamtlänge (kumulierter Gewinn negativ), wird committet. Sonst wird PROBEWEISE weitergemacht - Schritt 1-2 mit
+   Gesamtlänge (kumulierte Längenänderung negativ), wird committet. Sonst wird PROBEWEISE weitergemacht - Schritt 1-2 mit
    dem neuen freien Endpunkt -, bis zur gewählten **Tiefe** oder bis ein Schließen sich lohnt; gelingt das nicht,
    wird die ganze Kette rückgängig gemacht und der nächste Kandidat probiert.
 4. **Tiefe 1 = 2-opt mit Kandidatenliste.** Bei Tiefe 1 entspricht diese Suche exakt Kandidatenliste + Don't-Look-
@@ -374,8 +374,8 @@ st.markdown(
 """
 )
 st.caption(
-    "Die Nachbarn des Nachbarschafts-Zweigs (noch nicht gebaut): VLSN (cyclic exchange, Dynasearch) und VRP-Nachbarschaften "
-    "(inter-route-Züge) setzen auf Lin-Kernighan auf; ALNS ist der Konvergenzpunkt mit VNS, an eine CVRP-Instanz gebunden."
+    "Die Nachbarn des Nachbarschafts-Zweigs: Dynasearch (dynasearch-demo) und VRP-Nachbarschaften "
+    "(vrp-nachbarschaften-demo, inter-route-Züge) setzen auf Lin-Kernighan auf; ALNS (alns-demo) ist der Konvergenzpunkt mit VNS, an eine CVRP-Instanz gebunden."
 )
 
 st.markdown("---")
@@ -383,9 +383,9 @@ st.markdown("---")
 with st.expander("🔬 Kleine Instanz: wo 2-opt hängen bleibt und Lin-Kernighan nicht"):
     st.markdown(
         """
-Bei 8 Stopps (Brute-Force-Vergleich möglich) bleibt ein 2-opt-Abstieg (Tiefe 1) mit Kandidatenliste bei einer
+Bei 8 Knoten (Depot und 7 Stopps, Brute-Force-Vergleich möglich) bleibt ein 2-opt-Abstieg (Tiefe 1) mit Kandidatenliste bei einer
 bestimmten Startlösung bei **312.35 km** hängen - einem echten lokalen Optimum, das aber **6.53 %** über dem wahren
-globalen Optimum liegt (**293.21 km**, per Brute-Force über alle 5040 Touren bestätigt). Schon **Tiefe 2** findet
+globalen Optimum liegt (**293.21 km**, per Brute-Force über alle 5040 Reihenfolgen ab dem Depot bestätigt). Schon **Tiefe 2** findet
 von derselben Startlösung aus das globale Optimum - der probeweise weitergeführte Zug erkennt eine Verbesserung,
 die der einstufige 2-opt-Zug nicht sehen kann. Das ist die Kernidee von Lin-Kernighan in Reinform: nicht jede
 verbessernde Umstrukturierung ist mit einem einzelnen Kantentausch sichtbar.
@@ -430,6 +430,6 @@ Hill-Climbing-Demo), `lk_scenario.py` (Instanzen), `lk_evaluation.py` (Kennzahle
 st.markdown("---")
 st.caption(
     "Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – "
-    "Operations Research und Machine Learning. Interesse an einer maßgeschneiderten Lösung für "
-    "Ihr Unternehmen? [Kontakt aufnehmen](https://sebastianhanisch.net/kontakt.html)"
+    "Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). "
+    "Mehr zur Reihe: [Trajektorien-Metaheuristiken: HC bis ALNS](https://sebastianhanisch.net/konzepte-trajektorien-metaheuristiken.html)."
 )

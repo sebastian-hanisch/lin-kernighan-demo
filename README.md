@@ -16,7 +16,7 @@ hill-climbing-demo (Wurzel: nur bergab, bleibt im ersten Optimum stecken)       
   └─ [Nachbarschafts-Zweig]
         lin-kernighan-demo (variable Tiefe statt fixer 2-opt-Nachbarschaft)     [dieses Stück]
           ^ Querkante zu ILS ("Chained LK" = ILS mit LK statt 2-opt als innerer Suche)
-          └─ VLSN, VRP-Nachbarschaften                                          [nicht gebaut]
+          └─ dynasearch-demo, vrp-nachbarschaften-demo, alns-demo               [gebaut]
 ```
 
 Ergebnis in Kürze: **tiefere Suche hilft - aber nur unter zwei Bedingungen: gezielte Wiederverwendung (Kick statt Neustart) UND genug Budget oder genug Instanzgröße.** Bei 60 Stopps und dem Standardbudget dieser Linie (200 Tausend) sind Chained LK bei Tiefe 2 und Tiefe 1 praktisch gleichauf (0.66 % gegen 0.64 % über der Schranke) - ein ehrlicher Befund: die Tiefe zahlt sich beim üblichen Standardbudget bei dieser Standardgröße noch NICHT aus. Erst **ab 500 Tausend** Vorschlägen zieht Tiefe 2 klar und wachsend vorbei (0.51 % gegen 0.60 %, bei 2 Millionen 0.47 % gegen 0.58 %); bei **größeren Instanzen** (ab 100 Stopps) gewinnt Tiefe 2 dagegen schon beim Standardbudget. Bei **unabhängigen Neustarts** (keine Kicks, jeder Versuch wirft die Tour weg) hilft Tiefe dagegen NIE klar (alle Tiefen ~0.7 %, eher leicht schlechter mit mehr Tiefe) - der Kontrast zeigt, dass es die gezielte Wiederverwendung ist, nicht die Tiefe allein, die den Unterschied macht. Ein einzelner Abstieg profitiert klar von Tiefe (7.05 % → 6.45 %), sättigt aber bereits bei Tiefe 3.
@@ -27,7 +27,7 @@ Ergebnis in Kürze: **tiefere Suche hilft - aber nur unter zwei Bedingungen: gez
 | **Ein einzelner Abstieg, Tiefe 1-8** | ✅ **7.05/6.51/6.45/6.45/6.45/6.45/6.45 %** - Tiefe 2 escaped die meisten 2-opt-Sackgassen, ab Tiefe 3 keine weitere Verbesserung (gesättigt) |
 | **Unabhängige Neustarts, Tiefe 1-5** | ❌ **0.68/0.70/0.72/0.72 %** - Tiefe hilft hier NIE klar (eher leicht schlechter): teure Ketten kosten Neustarts |
 | **Chained LK über das Budget (Tiefe 1 gegen 2)** | ⚠️ 10T: **1.36/1.77 %** (Tiefe 2 verliert klar). 25T-200T: etwa gleichauf (1.03/1.02, 0.79/1.02, 0.70/0.68, 0.64/0.66 %). AB 500T dreht sich das Bild klar: 0.60/0.51, 1M **0.58/0.47**, 2M **0.58/0.47 %** |
-| **Kleine Instanz (8 Stopps)** | ✅ Ein 2-opt-Abstieg bleibt bei 312.35 km hängen (6.53 % über dem globalen Optimum 293.21 km, Brute-Force bestätigt) - Tiefe 2 findet das Optimum |
+| **Kleine Instanz (8 Knoten: Depot + 7 Stopps)** | ✅ Ein 2-opt-Abstieg bleibt bei 312.35 km hängen (6.53 % über dem globalen Optimum 293.21 km, Brute-Force bestätigt) - Tiefe 2 findet das Optimum |
 | **Größe (Tiefe 1 gegen 2, 200 Tausend)** | ✅ n=100: 1.14/1.06, n=150: 1.74/1.46, n=200: **2.09/1.82 %** - Tiefe 2 gewinnt ab 100 Stopps klar, auch beim Standardbudget |
 
 ## Was die Demo zeigt
@@ -74,7 +74,7 @@ Die einzelne Standardinstanz landet hier durch Zufall sehr nah am echten Optimum
 
 - **Zentrale Regression:** `lk_descend(max_depth=1, breadth1>=Kandidatenlisten-Größe)` liefert für jeden getesteten Seed BYTE-GLEICH dieselbe Tour und Bewertungszahl wie `lk_dlb.dlb_descend` (auch mit dem `touched`-Kurzweg) - kein eigenständig hergeleitetes Risiko im Grenzfall, nur die verkettete Vertiefung ist neu.
 - **LK-Kette:** gültige Permutation nach jeder Tiefe, Längenbuchhaltung stimmt mit neu berechneter Tourlänge überein, strikt monotone Verbesserung, Rückgängig-Mechanik bei erfolgloser Kette geprüft (Umkehrung ist selbstinvers), Tiefen-Buchführung (`depth_hist`) summiert korrekt.
-- **Kleine-Instanz-Demonstration:** eine konkrete 8-Stopps-Instanz, bei der ein 2-opt-Abstieg (Tiefe 1) nachweislich in einem echten, aber suboptimalen lokalen Optimum hängen bleibt (312.35 km, 6.53 % über dem per Brute-Force bestätigten globalen Optimum 293.21 km) - Tiefe 2 findet von derselben Startlösung aus das Optimum.
+- **Kleine-Instanz-Demonstration:** eine konkrete 8-Knoten-Instanz (Depot + 7 Stopps), bei der ein 2-opt-Abstieg (Tiefe 1) nachweislich in einem echten, aber suboptimalen lokalen Optimum hängen bleibt (312.35 km, 6.53 % über dem per Brute-Force bestätigten globalen Optimum 293.21 km) - Tiefe 2 findet von derselben Startlösung aus das Optimum.
 - Übernommener Kern: 2-opt gegen Brute-Force, Abstieg strikt monoton und im lokalen Optimum, Bewertungsbudget, 1-Baum-Schranke gegen Brute-Force (n = 8) und CP-SAT (n = 20); Instanz gegen eingefrorene Werte; Doppelbrücke erschöpfend gegen alle 2-opt-Züge (aus der iterated-local-search-demo übernommen).
 - **Alle Zahlen der App-Texte sind als Tests hinterlegt** (Seitenleiste, Presets, Grenzen-Tabelle, Tiefen-, Budget-, Neustart-Kontrast- und Größen-Aussagen; jeweils Mittel über die festen Sweep-Instanzen × Ketten; positive **und** negative Aussagen; Rechenzeiten nur als Größenordnung); alle 5 Presets über mehrere Instanzen und Ketten in Urteil-Bändern; AppTest-Rauchtests (Voreinstellung, jedes Preset, jeder Schritt bei 10 und 60 Stopps, Iterations-Regler, ▶️ Abspielen und ▶️ Kicks abspielen ohne doppelte Schlüssel, Würfel-Knöpfe, Permalink-Grenzen, Extremwerte, Experimente auf Abruf, Footer).
 
@@ -111,6 +111,4 @@ pytest tests/ -v
 
 ---
 
-Teil des [Operations-Research-Demo-Portfolios](https://sebastianhanisch.net/demos.html) von
-[Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning.
-Interesse an einer maßgeschneiderten Lösung? [Kontakt aufnehmen](https://sebastianhanisch.net/kontakt.html).
+Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). Mehr zur Reihe: [Trajektorien-Metaheuristiken: HC bis ALNS](https://sebastianhanisch.net/konzepte-trajektorien-metaheuristiken.html).
