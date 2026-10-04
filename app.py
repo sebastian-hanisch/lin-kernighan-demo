@@ -370,7 +370,7 @@ st.markdown(
 | **Die tiefere Suche wird gezielt wiederverwendet (Chain), nicht weggeworfen (Neustart)** | Bei unabhängigen Neustarts hilft Tiefe NIE klar (alle Tiefen bei 200 Tausend um 0.68-0.72 %, eher leicht schlechter mit mehr Tiefe) - teurere Ketten kosten Neustarts, ohne die Güte je Neustart entsprechend zu verbessern. Als Chained LK zeigt sich dagegen bei genug Budget oder Instanzgröße ein klarer, wachsender Vorsprung. | Kein Nachfolger nötig - dieselbe Lehre wie Iterated Local Search selbst: teure Suche lohnt sich nur mit billiger Wiederverwendung |
 | **Genug Budget ODER genug Instanzgröße, um die Tiefe zu amortisieren** | Bei 60 Stopps und dem Standardbudget (200 Tausend) sind Tiefe 1 und 2 praktisch gleichauf (0.64 gegen 0.66 %) - erst ab 500 Tausend zieht Tiefe 2 klar vorbei (0.51 gegen 0.60 %). Bei größeren Instanzen (ab 100 Stopps) gewinnt Tiefe 2 dagegen schon beim Standardbudget. | Kleineres n, größeres Budget, oder eine flachere Tiefe |
 | **Ein einzelner Abstieg profitiert nur begrenzt von mehr Tiefe** | Bei einem einzelnen Abstieg sättigt die Güte bereits bei Tiefe 3 (6.45 % gegen 7.05 % bei Tiefe 1) - tiefer bringt nichts mehr, aber kostet weiter mehr Bewertungen je Neustart. | (kein Nachfolger nötig - der Sättigungspunkt ist strukturell, nicht regler-spezifisch) |
-| **Kein volles Backtracking über Ebene 1 hinaus** | Ab Ebene 2 wird gierig nur der erste gültige Kandidat verfolgt (keine Rückverfolgung mehrerer Kandidaten wie im Original-Paper bei Ebene 1 UND 2) - eine bewusste Vereinfachung für die Demo. | **VLSN** (sehr große Nachbarschaften, systematisches Backtracking über eine ganze Klasse von Zügen) |
+| **Kein volles Backtracking über Ebene 1 hinaus** | Ab Ebene 2 wird gierig nur der erste gültige Kandidat verfolgt (keine Rückverfolgung mehrerer Kandidaten wie im Original-Paper bei Ebene 1 UND 2) - eine bewusste Vereinfachung für die Demo. | Kein Stück im Portfolio; in der Literatur z. B. LKH (Helsgaun 2000) mit größeren Kandidatenmengen und tieferem Backtracking |
 """
 )
 st.caption(
@@ -391,7 +391,7 @@ die der einstufige 2-opt-Zug nicht sehen kann. Das ist die Kernidee von Lin-Kern
 verbessernde Umstrukturierung ist mit einem einzelnen Kantentausch sichtbar.
         """
     )
-    st.caption("Ein einzelnes, gezielt gefundenes Beispiel (Suche über 300 Zufallsinstanzen à 8-10 Stopps) - kein Beleg, dass das bei jeder Instanz oder jedem Start passiert, aber ein Existenzbeweis, dass es passieren kann.")
+    st.caption("Ein einzelnes, gezielt aus Zufallsinstanzen herausgesuchtes Beispiel (die Suche selbst ist hier nicht reproduziert, der Fall ist eingefroren und im Test per Brute-Force geprüft) - kein Beleg, dass das bei jeder Instanz oder jedem Start passiert, aber ein Existenzbeweis, dass es passieren kann.")
 
 st.markdown("---")
 
