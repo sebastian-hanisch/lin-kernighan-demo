@@ -182,3 +182,33 @@ def test_chained_run_at_depth_one_uses_only_two_opt_moves_like_dlb_descend():
     t0 = A.random_tour(30, np.random.default_rng(4))
     r0 = LK.lk_descend(Dm, t0, cand, max_depth=1, breadth1=D.CANDIDATE_K, seed=0)
     assert set(r0.depth_hist) <= {1}
+
+
+@pytest.mark.parametrize("n, budget, depth", [(40, 20000, 2), (60, 100000, 3), (25, 6000, 1)])
+def test_chained_trace_is_recorded_per_evaluated_pairs_not_per_iteration(monkeypatch, n, budget, depth):
+    """Die Achse heißt "Bewertete Kandidatenpaare": ein Verlaufspunkt je budget // 300 BEWERTUNGEN (Alt: je 333 ITERATIONEN - bei rund 100 Bewertungen
+    je Wiederabstieg blieben wenige Punkte statt ~300). Orakel: die Bewertungen je Iteration werden am Aufruf von lk_descend mitgezählt und die Regel
+    daraus unabhängig neu angewendet."""
+    D_ = _instance(n, 4)
+    cand = D.build_candidate_lists(D_, 5)
+    per_call = []
+    real = LK.lk_descend
+
+    def counting(*args, **kwargs):
+        r = real(*args, **kwargs)
+        per_call.append(r.evaluations)
+        return r
+    monkeypatch.setattr(LK, "lk_descend", counting)
+    start = np.random.default_rng(1).permutation(n)
+    run = LK.chained_run(D_, start, cand, max_depth=depth, budget=budget, seed=2, keep_snapshots=False)
+    every, ev = max(1, budget // 300), per_call[0]
+    expected, threshold = [ev], (ev // every + 1) * every
+    for e in per_call[1:]:
+        ev += e
+        if ev >= threshold or ev >= budget:
+            expected.append(ev)
+            threshold = (ev // every + 1) * every
+    assert run.evaluations == ev and run.iterations == len(per_call) - 1
+    assert run.trace_iter.tolist() == expected
+    assert len(run.trace_length) == len(run.trace_best) == len(expected) and not np.any(np.diff(run.trace_best) > 1e-9)
+    assert len(expected) >= min(run.iterations + 1, 150)                  # nicht nur 2 bis 5 Punkte

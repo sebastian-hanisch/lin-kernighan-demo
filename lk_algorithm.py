@@ -234,7 +234,7 @@ def chained_run(D, start, cand, max_depth=2, breadth1=5, n_bridges=1, budget=100
     Kandidatenpaare insgesamt; der Kick selbst zählt nicht (dieselbe Konvention wie überall in der Linie)."""
     rng = np.random.default_rng(seed)
     evaluations = iterations = accepted = 0
-    trace_every = max(1, budget // trace_points)
+    trace_every = max(1, budget // trace_points)               # Abstand der Verlaufspunkte in BEWERTETEN KANDIDATENPAAREN (nicht in Iterationen: ein Wiederabstieg kostet viele Bewertungen)
 
     init_seed = int(rng.integers(0, 2**31 - 1))
     r0 = lk_descend(D, start, cand, max_depth=max_depth, breadth1=breadth1, seed=init_seed, max_evaluations=budget)
@@ -243,6 +243,7 @@ def chained_run(D, start, cand, max_depth=2, breadth1=5, n_bridges=1, budget=100
     best_tour, best_length = current.copy(), current_length
     snapshots = [current.copy()] if keep_snapshots else []
     tr_it, tr_len, tr_best = [evaluations], [current_length], [current_length]
+    next_trace = (evaluations // trace_every + 1) * trace_every
 
     while evaluations < budget:
         remaining = budget - evaluations
@@ -259,10 +260,11 @@ def chained_run(D, start, cand, max_depth=2, breadth1=5, n_bridges=1, budget=100
             best_length, best_tour = current_length, current.copy()
         if keep_snapshots:
             snapshots.append(current.copy())
-        if iterations % trace_every == 0 or evaluations >= budget:
+        if evaluations >= next_trace or evaluations >= budget:
             tr_it.append(evaluations)
             tr_len.append(current_length)
             tr_best.append(best_length)
+            next_trace = (evaluations // trace_every + 1) * trace_every
 
     final_length = A.tour_length(current, D)
     best_length = A.tour_length(best_tour, D)
